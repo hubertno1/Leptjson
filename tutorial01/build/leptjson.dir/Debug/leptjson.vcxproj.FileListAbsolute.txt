@@ -1,2 +1,2 @@
-E:\documents\Github\json-tutorial-master\tutorial01\build\Debug\leptjson.pdb
-E:\documents\Github\json-tutorial-master\tutorial01\build\leptjson.dir\Debug\leptjson.pdb
+E:\documents\Projects\Leptjson\tutorial01\build\Debug\leptjson.pdb
+E:\documents\Projects\Leptjson\tutorial01\build\leptjson.dir\Debug\leptjson.pdb

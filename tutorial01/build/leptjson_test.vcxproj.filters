@@ -1,16 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="E:\documents\Github\json-tutorial-master\tutorial01\test.c">
+    <ClCompile Include="E:\documents\Projects\Leptjson\tutorial01\test.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="E:\documents\Github\json-tutorial-master\tutorial01\CMakeLists.txt" />
+    <CustomBuild Include="E:\documents\Projects\Leptjson\tutorial01\CMakeLists.txt" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source Files">
-      <UniqueIdentifier>{9A08302C-72C8-3E8E-AF68-1D05F01D4E09}</UniqueIdentifier>
+      <UniqueIdentifier>{F85317F7-C839-3BD7-9E4F-D01C5B9E9EC5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -1,6 +1,6 @@
-^E:\DOCUMENTS\GITHUB\JSON-TUTORIAL-MASTER\TUTORIAL01\BUILD\CMAKEFILES\1B5AAB1C539A664E065BA254738B965B\GENERATE.STAMP.RULE
+^E:\DOCUMENTS\PROJECTS\LEPTJSON\TUTORIAL01\BUILD\CMAKEFILES\CF6686B680E8CBC2BE36F299733E0D57\GENERATE.STAMP.RULE
 setlocal
-E:\installations\Cmake\bin\cmake.exe -SE:/documents/Github/json-tutorial-master/tutorial01 -BE:/documents/Github/json-tutorial-master/tutorial01/build --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file E:/documents/Github/json-tutorial-master/tutorial01/build/leptjson_test.sln
+E:\installations\Cmake\bin\cmake.exe -SE:/documents/Projects/Leptjson/tutorial01 -BE:/documents/Projects/Leptjson/tutorial01/build --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file E:/documents/Projects/Leptjson/tutorial01/build/leptjson_test.sln
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone

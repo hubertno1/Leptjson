@@ -1,6 +1,6 @@
-^E:\DOCUMENTS\GITHUB\JSON-TUTORIAL-MASTER\TUTORIAL01\CMAKELISTS.TXT
+^E:\DOCUMENTS\PROJECTS\LEPTJSON\TUTORIAL01\CMAKELISTS.TXT
 setlocal
-E:\installations\Cmake\bin\cmake.exe -SE:/documents/Github/json-tutorial-master/tutorial01 -BE:/documents/Github/json-tutorial-master/tutorial01/build --check-stamp-file E:/documents/Github/json-tutorial-master/tutorial01/build/CMakeFiles/generate.stamp
+E:\installations\Cmake\bin\cmake.exe -SE:/documents/Projects/Leptjson/tutorial01 -BE:/documents/Projects/Leptjson/tutorial01/build --check-stamp-file E:/documents/Projects/Leptjson/tutorial01/build/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone

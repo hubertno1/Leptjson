@@ -1,8 +1,8 @@
 # CMake generation dependency list for this directory.
-E:/documents/Github/json-tutorial-master/tutorial01/CMakeLists.txt
-E:/documents/Github/json-tutorial-master/tutorial01/build/CMakeFiles/3.23.0-rc3/CMakeCCompiler.cmake
-E:/documents/Github/json-tutorial-master/tutorial01/build/CMakeFiles/3.23.0-rc3/CMakeRCCompiler.cmake
-E:/documents/Github/json-tutorial-master/tutorial01/build/CMakeFiles/3.23.0-rc3/CMakeSystem.cmake
+E:/documents/Projects/Leptjson/tutorial01/CMakeLists.txt
+E:/documents/Projects/Leptjson/tutorial01/build/CMakeFiles/3.23.0-rc3/CMakeCCompiler.cmake
+E:/documents/Projects/Leptjson/tutorial01/build/CMakeFiles/3.23.0-rc3/CMakeRCCompiler.cmake
+E:/documents/Projects/Leptjson/tutorial01/build/CMakeFiles/3.23.0-rc3/CMakeSystem.cmake
 E:/installations/Cmake/share/cmake-3.23/Modules/CMakeCCompiler.cmake.in
 E:/installations/Cmake/share/cmake-3.23/Modules/CMakeCCompilerABI.c
 E:/installations/Cmake/share/cmake-3.23/Modules/CMakeCInformation.cmake

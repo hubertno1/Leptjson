@@ -34,11 +34,20 @@ static int lept_parse_value(lept_context* c, lept_value* v) {
 
 int lept_parse(lept_value* v, const char* json) {
     lept_context c;
+    int ret;
     assert(v != NULL);          //表达式值为1，断言成功；表达式值为0，断言失败。
     c.json = json;                 
     v->type = LEPT_NULL;
     lept_parse_whitespace(&c);
-    return lept_parse_value(&c, v);
+    if ((ret = lept_parse_value(&c, v)) == LEPT_PARSE_OK)       //这里别忘了加括号
+    {
+        lept_parse_whitespace(&c);
+        if (*c.json != '\0')
+        {
+            ret = LEPT_PARSE_ROOT_NOT_SINGULAR;
+        }
+    }
+    return ret;
 }
 
 lept_type lept_get_type(const lept_value* v) {

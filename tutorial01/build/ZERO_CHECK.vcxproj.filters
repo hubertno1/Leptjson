@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <CustomBuild Include="E:\documents\Github\json-tutorial-master\tutorial01\build\CMakeFiles\1b5aab1c539a664e065ba254738b965b\generate.stamp.rule">
+    <CustomBuild Include="E:\documents\Projects\Leptjson\tutorial01\build\CMakeFiles\cf6686b680e8cbc2be36f299733e0d57\generate.stamp.rule">
       <Filter>CMake Rules</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="CMake Rules">
-      <UniqueIdentifier>{7E5F5497-E782-3134-A546-BF5B960EEBA5}</UniqueIdentifier>
+      <UniqueIdentifier>{FA90FCF6-F153-309F-8066-BE9791776C17}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
