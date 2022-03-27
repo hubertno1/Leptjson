@@ -21,10 +21,10 @@ static int test_pass = 0;
 #define EXPECT_EQ_INT(expect, actual) EXPECT_EQ_BASE((expect) == (actual), expect, actual, "%d")    //macro parameter 
 
 static void test_parse_null() {
-    lept_value v;       //lept_value 是一个 typedef的结构体，目前的内容是一个enum的lept_type的type
-    v.type = LEPT_FALSE;        //LEPT_FALSE为1，LEPT_TRUE为2
-    EXPECT_EQ_INT(LEPT_PARSE_OK, lept_parse(&v, "null"));       //
-    EXPECT_EQ_INT(LEPT_NULL, lept_get_type(&v));
+    lept_value v;                                               //v在此处定义，原因是第二个解析函数需要v值
+    v.type = LEPT_FALSE;                                        //c不在此处定义，原因相反
+    EXPECT_EQ_INT(LEPT_PARSE_OK, lept_parse(&v, "null"));       //判断解析内容函数返回值是否为LEPT_PARSE_OK
+    EXPECT_EQ_INT(LEPT_NULL, lept_get_type(&v));                //判断解析类型函数返回值是否是LEPT_NULL
 }
 
 static void test_parse_true() {

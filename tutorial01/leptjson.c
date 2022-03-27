@@ -49,6 +49,7 @@ static int lept_parse_value(lept_context* c, lept_value* v) {
         case 'n':  return lept_parse_null(c, v);
         case '\0': return LEPT_PARSE_EXPECT_VALUE;
         default:   return LEPT_PARSE_INVALID_VALUE;
+            
     }
 }
 
@@ -59,7 +60,7 @@ int lept_parse(lept_value* v, const char* json) {
     c.json = json;                 
     v->type = LEPT_NULL;
     lept_parse_whitespace(&c);
-    if ((ret = lept_parse_value(&c, v)) == LEPT_PARSE_OK)       //这里别忘了加括号
+    if ((ret = lept_parse_value(&c, v)) == LEPT_PARSE_OK)       //这里别忘了加括号, 否则赋值表达式会出现异常
     {
         lept_parse_whitespace(&c);
         if (*c.json != '\0')
