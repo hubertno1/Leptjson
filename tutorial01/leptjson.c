@@ -28,13 +28,24 @@ static int lept_parse_literal(lept_context* c, lept_value* v, const char * liter
     return LEPT_PARSE_OK;
 }
 
+static int lept_parse_number(lept_context* c, lept_value* v) {      /* 把解析非法字符（返回值:LEPT_PARSE_INVALID_VALUE）也包含在解析数字函数里 */
+    char* end;
+    v->n = strtod(c->json, &end);
+    if (c->json == end) {       //暂时先不写，这个条件是错误的
+        return LEPT_PARSE_INVALID_VALUE;
+    }
+    c->json = end;
+    v->type = LEPT_NUMBER;
+    return LEPT_PARSE_OK;
+}
+
 static int lept_parse_value(lept_context* c, lept_value* v) {
     switch (*c->json) {
         case 't':  return lept_parse_literal(c, v, "true", LEPT_TRUE);
         case 'f':  return lept_parse_literal(c, v, "false", LEPT_FALSE);
         case 'n':  return lept_parse_literal(c, v, "null", LEPT_NULL);
         case '\0': return LEPT_PARSE_EXPECT_VALUE;
-        default:   return LEPT_PARSE_INVALID_VALUE;         
+        default:   return lept_parse_number(c, v);         
     }
 }
 
@@ -59,4 +70,9 @@ int lept_parse(lept_value* v, const char* json) {
 lept_type lept_get_type(const lept_value* v) {
     assert(v != NULL);
     return v->type;
+}
+
+double lept_get_number(const lept_value* v) {
+    assert(v != NULL && v->type == LEPT_NUMBER);
+    return v->n;
 }
