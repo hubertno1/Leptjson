@@ -1,8 +1,12 @@
 #include "leptjson.h"
 #include <assert.h>  /* assert() */
+#include <errno.h>  /* errno, ERANGE */
+#include <math.h>   /* huge value */
 #include <stdlib.h>  /* NULL */
 
 #define EXPECT(c, ch)       do { assert(*c->json == (ch)); c->json++; } while(0)
+#define ISDIGIT(ch)         ((ch) >= '0' && (ch) <= '9')
+#define ISDIGIT1TO9(ch)     ((ch) >= '1' && (ch) <= '9')
 
 typedef struct {
     const char* json;
@@ -15,7 +19,7 @@ static void lept_parse_whitespace(lept_context* c) {
     c->json = p;
 }
 
-static int lept_parse_literal(lept_context* c, lept_value* v, const char * literal, lept_type type) {
+static int lept_parse_literal(lept_context* c, lept_value* v, const char * literal, lept_type type) {       /*把解析非法字符（返回值:LEPT_PARSE_INVALID_VALUE）的部分也包含在literal里*/
     size_t i;
     EXPECT(c, literal[0]);
     for (i = 0; literal[i + 1]; i++) {
@@ -28,14 +32,37 @@ static int lept_parse_literal(lept_context* c, lept_value* v, const char * liter
     return LEPT_PARSE_OK;
 }
 
-static int lept_parse_number(lept_context* c, lept_value* v) {      /* 把解析非法字符（返回值:LEPT_PARSE_INVALID_VALUE）也包含在解析数字函数里 */
-    char* end;
-    v->n = strtod(c->json, &end);
-    if (c->json == end) {       //暂时先不写，这个条件是错误的
-        return LEPT_PARSE_INVALID_VALUE;
+static int lept_parse_number(lept_context* c, lept_value* v) {      /* 把解析非法字符（返回值:LEPT_PARSE_INVALID_VALUE）的部分也包含在解析数字函数里 */
+    const char* p = c->json;    /* p is position */
+    /*负号...*/
+    if (*p == '-') p++;
+    /*整数...*/
+    if (*p == '0') p++;
+    else {
+        if (!ISDIGIT1TO9(*p)) return LEPT_PARSE_INVALID_VALUE;
+        for (p++; ISDIGIT(*p); p++);
     }
-    c->json = end;
+    /*小数点, 小数...*/
+    if (*p == '.') {
+        p++;
+        if (!ISDIGIT(*p)) return LEPT_PARSE_INVALID_VALUE;
+        for (p++; ISDIGIT(*p); p++);
+    }
+    /*指数...*/
+    if (*p == 'e' || *p == 'E') {
+        p++;
+        if (*p == '+' || *p == '-') p++;
+        if (!ISDIGIT(*p)) return LEPT_PARSE_INVALID_VALUE;
+        for (p++; ISDIGIT(*p); p++);
+    }
+    errno = 0;
+    v->n = strtod(c->json, NULL);
+    if (errno == ERANGE && (v->n == HUGE_VAL || v->n == -HUGE_VAL))
+        return LEPT_PARSE_NUMBER_TOO_BIG;
+
+    v->n = strtod(c->json, NULL);
     v->type = LEPT_NUMBER;
+    c->json = p;
     return LEPT_PARSE_OK;
 }
 
