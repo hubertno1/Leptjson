@@ -3,6 +3,7 @@
 #include <errno.h>  /* errno, ERANGE */
 #include <math.h>   /* HUGE_VAL */
 #include <stdlib.h>  /* NULL */
+#include <string.h> /* memcpy */
 
 #define EXPECT(c, ch)       do { assert(*c->json == (ch)); c->json++; } while(0)
 #define ISDIGIT(ch)         ((ch) >= '0' && (ch) <= '9')
@@ -121,10 +122,14 @@ size_t lept_get_string_length(const lept_value* v) {
     return v->u.s.len;
 }
 
-void lept_set_string(lept_value* v, const char* s, size_t len) {
+int lept_set_string(lept_value* v, const char* s, size_t len) {         //原来返回值是void，为了检测malloc失败的错误并返回，将其改为int类型，并修改.h对应的声明
     assert(v != NULL && (s != NULL || len == 0));
     lept_free(v);
     v->u.s.s = (char*)malloc(len + 1);
+    if (v->u.s.s == NULL) {
+        puts("Memory allocation error.");
+        return LEPT_MALLOC_ERROR;
+    }
     memcpy(v->u.s.s, s, len);
     v->u.s.s[len] = '\0';
     v->u.s.len = len;

@@ -22,6 +22,8 @@ enum {
     LEPT_PARSE_NUMBER_TOO_BIG
 };
 
+#define LEPT_MALLOC_ERROR -2
+
 /* 初始化变体类型lept_value的v, 使其类型为LEPT_NULL */
 #define lept_init(v) do { (v)->type = LEPT_NULL; }while(0) 
 
@@ -41,6 +43,6 @@ void lept_set_number(lept_value* v, double n);
 
 const char* lept_get_string(const lept_value* v);
 size_t lept_get_string_length(const lept_value* v);
-void lept_set_string(lept_value* v, const char* s, size_t len);
+int lept_set_string(lept_value* v, const char* s, size_t len);
 
 #endif /* LEPTJSON_H__ */
