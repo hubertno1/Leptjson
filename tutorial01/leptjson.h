@@ -16,13 +16,13 @@ typedef struct {
 
 enum {
     LEPT_PARSE_OK = 0,
-    LEPT_PARSE_EXPECT_VALUE,
+    LEPT_PARSE_EXPECT_VALUE,        //表示字符串中只含有空白字符
     LEPT_PARSE_INVALID_VALUE,
     LEPT_PARSE_ROOT_NOT_SINGULAR,
-    LEPT_PARSE_NUMBER_TOO_BIG
+    LEPT_PARSE_NUMBER_TOO_BIG,
+    LEPT_PARSE_MISS_QUOTATION_MARK
 };
 
-#define LEPT_MALLOC_ERROR -2
 
 /* 初始化变体类型lept_value的v, 使其类型为LEPT_NULL */
 #define lept_init(v) do { (v)->type = LEPT_NULL; }while(0) 

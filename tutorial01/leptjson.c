@@ -3,15 +3,57 @@
 #include <errno.h>  /* errno, ERANGE */
 #include <math.h>   /* HUGE_VAL */
 #include <stdlib.h>  /* NULL */
+#include <stdio.h>
 #include <string.h> /* memcpy */
 
+#define LEPT_MALLOC_ERROR -2
+#define LEPT_REALLOC_ERROR -3
+
+#ifndef LEPT_PARSE_STACK_INIT_SIZE
+#define LEPT_PARSE_STACK_INIT_SIZE 256
+#endif // !LEPT_PARSE_STACK_INIT_SIZE
+
+/* macro : PUTC(c, ch) */
+/* usage : Ê×ÏÈÍØÕ¹¿Õ¼ä£¬È»ºó°ÑchÑ¹Õ»    */
+#define PUTC(c, ch)         do {*(char*)lept_context_push(c, sizeof(char) ) = ch; } while(0)
 #define EXPECT(c, ch)       do { assert(*c->json == (ch)); c->json++; } while(0)
 #define ISDIGIT(ch)         ((ch) >= '0' && (ch) <= '9')
 #define ISDIGIT1TO9(ch)     ((ch) >= '1' && (ch) <= '9')
 
-typedef struct {
+typedef struct {                /*°ÑÒ»¸ö¶¯Ì¬¶ÑÕ»µÄÊý¾Ý·ÅÈëlept_contextÕâ¸ö½á¹¹Ìå*/
     const char* json;
+    char* stack;
+    size_t size, top;       //size-µ±Ç°¶ÑÕ»µÄ´óÐ¡£¬top-Õ»¶¥µÄÎ»ÖÃ£¬ÓÉÓÚÎÒÃÇ»áÀ©Õ¹ stack£¬ËùÒÔ²»Òª°Ñ top ÓÃÖ¸ÕëÐÎÊ½´æ´¢£¨?£©
 }lept_context;
+
+static void* lept_context_push(lept_context* c, size_t size) {          //
+    void* ret;
+    assert(size > 0);                                                   
+    if (c->top + size >= c->size) {         //³õÊ¼c->topÎª0£¬¶ÑÕ»µ¥ÔªsizeµÄÖµÎªsize_t * sizeof(char)
+        if (c->size == 0)                   //³õÊ¼c->sizeÎª0£¬¸øËü¸³Öµ¶ÑÕ»µÄ³õÊ¼×Ü´óÐ¡Îª256size_t
+            c->size = LEPT_PARSE_STACK_INIT_SIZE;
+        while (c->top + size >= c->size)    //µ±¶ÑÕ»´óÐ¡²»Âú×ã£¬¼´¶ÑÕ»¹ýÐ¡Ê±£¬ÍØ³ä¶ÑÕ»´óÐ¡£¬ÍØÕ¹ÎªÔ­À´´óÐ¡µÄ1.5±¶£¨ 1 + 1/2 £©
+            c->size += c->size >> 1;
+        c->stack = (char*)realloc(c->stack, c->size);   //c->stack³õÊ¼Ê±Îª¿ÕÖ¸Õë£¬µÚÒ»´ÎÖ´ÐÐÓï¾äµÈÓÚrealloc(NULL, c->size),·ÖÅäÒ»¸öÄÚ´æ¿é£¬µ¥Î»ÊÇsize_t
+        
+        /* Îª½â¾öÄÚ´æÐ¹Â©µÄ×Ô¼ì·½·¨£¬ÔÝÊ±²»ÓÃ */
+        //char* new_c_stack = (char*)realloc(c->stack, c->size);
+        //if (!new_c_stack) {
+        //    puts("Memory realloc error.");
+        //    return (void*)LEPT_REALLOC_ERROR;
+        //}
+        //c->stack = new_c_stack;
+        
+    }
+    ret = c->stack + c->top;
+    c->top += size;
+    return ret;
+}
+
+static void* lept_context_pop(lept_context* c, size_t size) {
+    assert(c->top >= size);
+    return c->stack + (c->top -= size);
+}
 
 static void lept_parse_whitespace(lept_context* c) {
     const char *p = c->json;
@@ -67,22 +109,49 @@ static int lept_parse_number(lept_context* c, lept_value* v) {      /* °Ñ½âÎö·Ç·
     return LEPT_PARSE_OK;
 }
 
+static int lept_parse_string(lept_context* c, lept_value* v) {              //cÀïÓÐ´ý½âÎöµÄjson,ÇÒcµÄÄÚÈÝ³õÊ¼»¯¹ý£¬vµÄtype³õÊ¼»¯ÎªLEPT_NULL
+    size_t head = c->top, len;
+    const char* p;      //p²»ÄÜ¸Ä±äËüÖ¸ÏòµÄÄÚÈÝ£¬ÒòÎªpÊÇÖ¸Ïòconst charµÄÖ¸Õë
+    EXPECT(c, '\"');    //Ê¹c->jsonÖ¸Ïò×Ö·û´®¿ªÊ¼×Ö·û '\"' µÄÏÂÒ»¸ö×Ö·û
+    p = c->json;        //Ê¹pÖ¸Ïòµ±Ç°Ìø¹ý'\"'µÄ×Ö·û´®£¬²»¹ýÎÞ·¨Í¨¹ý²Ù×Ýp¸Ä±ä×Ö·û´®ÄÚÈÝ
+    for (;;) {
+        char ch = *p++;     //ºó×ÔÔö£¬·µ»ØÖµÊÇ×ÔÔöÇ°µÄÖµ£¬ÔËËã·ûÓÐ²Ù×÷ÊýºÍ·µ»ØÖµ£¬ÒªÉî¿ÌÀí½âÕâÒ»µã
+        switch (ch) {
+            case '\"' :
+                len = c->top - head;
+                lept_set_string(v, (const char*)lept_context_pop(c, len), len);
+                c->json = p;
+                return LEPT_PARSE_OK;
+            case '\0' :
+                c->top = head;
+                return LEPT_PARSE_MISS_QUOTATION_MARK;
+            default :
+                PUTC(c, ch);
+        }
+
+    }
+
+}
+
 static int lept_parse_value(lept_context* c, lept_value* v) {
     switch (*c->json) {
         case 't':  return lept_parse_literal(c, v, "true", LEPT_TRUE);
         case 'f':  return lept_parse_literal(c, v, "false", LEPT_FALSE);
         case 'n':  return lept_parse_literal(c, v, "null", LEPT_NULL);
         case '\0': return LEPT_PARSE_EXPECT_VALUE;
-        default:   return lept_parse_number(c, v);         
+        default:   return lept_parse_number(c, v);   
+        case '\"': return lept_parse_string(c, v);
     }
 }
 
 int lept_parse(lept_value* v, const char* json) {
     lept_context c;
     int ret;
-    assert(v != NULL);          //±í´ïÊ½ÖµÎª1£¬¶ÏÑÔ³É¹¦£»±í´ïÊ½ÖµÎª0£¬¶ÏÑÔÊ§°Ü¡£
-    c.json = json;                 
-    v->type = LEPT_NULL;
+    assert(v != NULL);          
+    c.json = json;
+    c.stack = NULL;             //³õÊ¼»¯¶¯Ì¬¶ÑÕ»£¬c.stack³õÊ¼»¯ÎªNULLÖ¸Õë£¬c.sizeÓëc.top³õÊ¼Îª0
+    c.size = c.top = 0;
+    lept_init(v);               //´ý²¹×ãºó£¬ÎªÊ²Ã´ÖØ¸´³õÊ¼»¯v->type
     lept_parse_whitespace(&c);
     if ((ret = lept_parse_value(&c, v)) == LEPT_PARSE_OK)       //ÕâÀï±ðÍüÁË¼ÓÀ¨ºÅ, ·ñÔò¸³Öµ±í´ïÊ½»á³öÏÖÒì³£
     {
@@ -92,6 +161,9 @@ int lept_parse(lept_value* v, const char* json) {
             ret = LEPT_PARSE_ROOT_NOT_SINGULAR;
         }
     }
+
+    assert(c.top == 0);    /* ¼ÓÈë¶ÏÑÔ£¬È·±£ËùÓÐÊý¾Ý±»µ¯³ö */
+    free(c.stack);         /* ÊÍ·Å¶ÑÕ»ÄÚ´æ */
     return ret;
 }
 
@@ -134,4 +206,6 @@ int lept_set_string(lept_value* v, const char* s, size_t len) {         //Ô­À´·µ
     v->u.s.s[len] = '\0';
     v->u.s.len = len;
     v->type = LEPT_STRING;
+
+    return 0;
 }
