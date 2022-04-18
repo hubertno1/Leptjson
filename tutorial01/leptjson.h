@@ -14,14 +14,15 @@ typedef struct {
     lept_type type;
 }lept_value;        /* typedef的结构体 */
 
-enum {
+enum {              /* 错误码 */
     LEPT_PARSE_OK = 0,
     LEPT_PARSE_EXPECT_VALUE,        //表示字符串中只含有空白字符
     LEPT_PARSE_INVALID_VALUE,
-    LEPT_PARSE_ROOT_NOT_SINGULAR,
+    LEPT_PARSE_ROOT_NOT_SINGULAR,   //
     LEPT_PARSE_NUMBER_TOO_BIG,
     LEPT_PARSE_MISS_QUOTATION_MARK,
-    LEPT_PARSE_INVALID_STRING_ESCAPE
+    LEPT_PARSE_INVALID_STRING_ESCAPE,
+    LEPT_PARSE_INVALID_STRING_CHAR
 };
 
 

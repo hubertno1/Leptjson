@@ -55,6 +55,7 @@ static void test_parse_false() {
         EXPECT_EQ_INT(LEPT_PARSE_OK, lept_parse(&v, json));\
         EXPECT_EQ_INT(LEPT_NUMBER, lept_get_type(&v));\
         EXPECT_EQ_DOUBLE(expect, lept_get_number(&v));\
+        lept_free(&v);\
     } while(0)
 
 static void test_parse_number() {
@@ -119,9 +120,11 @@ static void test_parse_string() {
 #define TEST_ERROR(error, json) \
     do {\
         lept_value v;\
+        lept_init(&v);\
         v.type = LEPT_FALSE;\
         EXPECT_EQ_INT(error, lept_parse(&v, json));\
         EXPECT_EQ_INT(LEPT_NULL, lept_get_type(&v));\
+        lept_free(&v);\
     } while(0)
 
 static void test_parse_expect_value() {
@@ -146,7 +149,37 @@ static void test_parse_invalid_value() {
 
 static void test_parse_root_not_singular() {
     TEST_ERROR(LEPT_PARSE_ROOT_NOT_SINGULAR, "null x");
+
+    /* invalid number */
+    TEST_ERROR(LEPT_PARSE_ROOT_NOT_SINGULAR, "0123"); /* after zero should be '.' or nothing */
+    TEST_ERROR(LEPT_PARSE_ROOT_NOT_SINGULAR, "0x0");
+    TEST_ERROR(LEPT_PARSE_ROOT_NOT_SINGULAR, "0x123");
 }
+
+static void test_parse_number_too_big() {
+    TEST_ERROR(LEPT_PARSE_NUMBER_TOO_BIG, "1e309");
+    TEST_ERROR(LEPT_PARSE_NUMBER_TOO_BIG, "-1e309");
+}
+
+static void test_parse_missing_quotation_mark() {
+    /* TODO... */
+    TEST_ERROR(LEPT_PARSE_MISS_QUOTATION_MARK, "\"");
+    TEST_ERROR(LEPT_PARSE_MISS_QUOTATION_MARK, "\"abc");
+
+}
+static void test_parse_invalid_string_escape() {
+    /* TODO... */
+    TEST_ERROR(LEPT_PARSE_INVALID_STRING_ESCAPE, "\"\\v\"");
+    TEST_ERROR(LEPT_PARSE_INVALID_STRING_ESCAPE, "\"\\'\"");
+    TEST_ERROR(LEPT_PARSE_INVALID_STRING_ESCAPE, "\"\\0\"");
+    TEST_ERROR(LEPT_PARSE_INVALID_STRING_ESCAPE, "\"\\x12\"");
+}
+static void test_parse_invalid_string_char() {
+    /* TODO... */
+    TEST_ERROR(LEPT_PARSE_INVALID_STRING_CHAR, "\"\x01\"");
+    TEST_ERROR(LEPT_PARSE_INVALID_STRING_CHAR, "\"\x1F\"");
+}
+
 
 static void test_access_null() {
     lept_value v;
@@ -198,6 +231,10 @@ static void test_parse() {
     test_parse_expect_value();
     test_parse_invalid_value();
     test_parse_root_not_singular();
+    test_parse_number_too_big();
+    test_parse_missing_quotation_mark();
+    test_parse_invalid_string_escape();
+    test_parse_invalid_string_char();
 
     /*≤‚ ‘∑√Œ ∫Ø ˝*/
     test_access_null();

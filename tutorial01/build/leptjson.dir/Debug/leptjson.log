@@ -1,4 +1,4 @@
 ﻿  leptjson.c
-E:\documents\Projects\Leptjson\tutorial01\leptjson.c(215,17): warning C4047: “函数”:“lept_value *”与“lept_value **”的间接级别不同
-E:\documents\Projects\Leptjson\tutorial01\leptjson.c(215,15): warning C4024: “lept_free”: 形参和实参 1 的类型不同
+E:\documents\Projects\Leptjson\tutorial01\leptjson.c(221,17): warning C4047: “函数”:“lept_value *”与“lept_value **”的间接级别不同
+E:\documents\Projects\Leptjson\tutorial01\leptjson.c(221,15): warning C4024: “lept_free”: 形参和实参 1 的类型不同
   leptjson.vcxproj -> E:\documents\Projects\Leptjson\tutorial01\build\Debug\leptjson.lib

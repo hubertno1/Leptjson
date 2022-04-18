@@ -141,6 +141,11 @@ static int lept_parse_string(lept_context* c, lept_value* v) {              //c¿
                 }
                 break;
             default:
+                if ((unsigned char)ch < 0x20) {
+                    c->top = head;
+                    return LEPT_PARSE_INVALID_STRING_CHAR;
+                }
+
                 PUTC(c, ch);
 
         }
@@ -174,6 +179,7 @@ int lept_parse(lept_value* v, const char* json) {
         lept_parse_whitespace(&c);
         if (*c.json != '\0')
         {
+            v->type = LEPT_NULL;
             ret = LEPT_PARSE_ROOT_NOT_SINGULAR;
         }
     }
