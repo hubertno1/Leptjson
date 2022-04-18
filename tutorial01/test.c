@@ -109,8 +109,8 @@ static void test_parse_number() {
 static void test_parse_string() {
     TEST_STRING("", "\"\"");                
     TEST_STRING("hello", "\"hello\"");      
-#if 0
-    TEST_STRING("Hello\nworld", "\"Hello\\nworld\"");
+    TEST_STRING("hello\nworld", "\"hello\\nworld\"");
+#if 1
     TEST_STRING("\" \\ / \b \f \n \r \t", "\"\\\" \\\\ \\/ \\b \\f \\n \\r \\t\"");
 #endif
 }
@@ -207,7 +207,7 @@ static void test_parse() {
 }
 
 int main() {
-    test_parse();       //测试总函数
+    test_parse();       //测试总函数 
     printf("%d/%d (%3.2f%%) passed\n", test_pass, test_count, test_pass * 100.0 / test_count);      //%3.2f表示数字部分包括小数点占3位，不足3个，前面补空格，超过3个，按实际大小表示；2表示小数部分不包括小数点占2位
     return main_ret;        
 }
