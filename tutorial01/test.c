@@ -23,6 +23,10 @@ static int test_pass = 0;
 #define EXPECT_EQ_DOUBLE(expect, actual) EXPECT_EQ_BASE((expect) == (actual), expect, actual, "%.17g")  //比较两个double型是否相等
 #define EXPECT_EQ_STRING(expect, actual, alength) \
     EXPECT_EQ_BASE(sizeof(expect) - 1 == (alength) && memcmp(expect, actual, alength) == 0, expect, actual, "%s")
+#define EXPECT_TRUE(actual) EXPECT_EQ_BASE((actual) != 0, "true", "false", "%s")
+#define EXPECT_FALSE(actual) EXPECT_EQ_BASE((actual) == 0, "false", "true", "%s")
+
+
 
 static void test_parse_null() {
     lept_value v;                                               //v在此处定义，原因是第二个解析函数需要v值
@@ -144,23 +148,66 @@ static void test_parse_root_not_singular() {
     TEST_ERROR(LEPT_PARSE_ROOT_NOT_SINGULAR, "null x");
 }
 
+static void test_access_null() {
+    lept_value v;
+    lept_init(&v);
+    lept_set_string(&v, "a", 1);
+    lept_set_null(&v);
+    EXPECT_EQ_INT(LEPT_NULL, lept_get_type(&v));
+    lept_free(&v);
+}
+
+static void test_access_boolean() {
+    lept_value v;
+    lept_init(&v);
+    lept_set_string(&v, "a", 1);
+    lept_set_boolean(&v, 1);
+    EXPECT_TRUE(lept_get_boolean(&v));
+    lept_set_boolean(&v, 0);
+    EXPECT_FALSE(lept_get_boolean(&v));
+}
+
+static void test_access_number() {
+    lept_value v;
+    lept_init(&v);
+    lept_set_string(&v, "a", 1);
+    lept_set_number(&v, 1234.5);
+    EXPECT_EQ_DOUBLE(1234.5, lept_get_number(&v));
+    lept_free(&v);
+}
+
+static void test_access_string() {
+    lept_value v;
+    lept_init(&v);
+    lept_set_string(&v, "", 0);
+    EXPECT_EQ_STRING("", lept_get_string(&v), lept_get_string_length(&v));
+    lept_set_string(&v, "Hello", 5);        //set的一开始有free,所以在这行之前不需要lept_free(&v)来防止内存泄漏
+    EXPECT_EQ_STRING("Hello", lept_get_string(&v), lept_get_string_length(&v));
+    lept_free(&v);
+    
+}
+
+
 static void test_parse() {
-#if 0
+    /*测试解析函数*/
     test_parse_null();
     test_parse_true();
     test_parse_false();
     test_parse_number();
-#endif
-    test_parse_string();        //测试解析字符函数（测试解析总函数逻辑上的一部分）
-#if 0
+    test_parse_string();        
     test_parse_expect_value();
     test_parse_invalid_value();
     test_parse_root_not_singular();
-#endif
+
+    /*测试访问函数*/
+    test_access_null();
+    test_access_boolean();
+    test_access_number();
+    test_access_string();
 }
 
 int main() {
-    test_parse();       //测试解析总函数
+    test_parse();       //测试总函数
     printf("%d/%d (%3.2f%%) passed\n", test_pass, test_count, test_pass * 100.0 / test_count);      //%3.2f表示数字部分包括小数点占3位，不足3个，前面补空格，超过3个，按实际大小表示；2表示小数部分不包括小数点占2位
-    return main_ret;        //正常的main_ret为0, 异常的main_ret为1。 由EQ宏定义代码得出结论
+    return main_ret;        
 }

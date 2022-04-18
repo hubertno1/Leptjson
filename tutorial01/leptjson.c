@@ -167,7 +167,8 @@ int lept_parse(lept_value* v, const char* json) {
     return ret;
 }
 
-void lept_free(lept_value* v) {         /* 未完善，之后还要加上对数组和对象的释放 */
+/*如果v->type为LEPT_STRING,则free分配的内存，否则就只完成v->type = LEPT_NULL*/
+void lept_free(lept_value* v) {         /* 未完善，之后还要加上对数组和对象的释放 */ 
     assert(v != NULL);
     if (v->type == LEPT_STRING)
         free(v->u.s.s);
@@ -179,9 +180,25 @@ lept_type lept_get_type(const lept_value* v) {
     return v->type;
 }
 
+int lept_get_boolean(const lept_value* v) {
+    assert(v != NULL && (v->type == LEPT_FALSE || v->type == LEPT_TRUE));
+    return v->type == LEPT_TRUE;
+}
+
+void lept_set_boolean(lept_value* v, int b) {
+    lept_free(v);
+    v->type = b ? LEPT_TRUE : LEPT_FALSE;
+}
+
 double lept_get_number(const lept_value* v) {
     assert(v != NULL && v->type == LEPT_NUMBER);
     return v->u.n;
+}
+
+void lept_set_number(lept_value* v, double n) {
+    lept_free(&v);
+    v->u.n = n;
+    v->type = LEPT_NUMBER;
 }
 
 const char* lept_get_string(const lept_value* v) {

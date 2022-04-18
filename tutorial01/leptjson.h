@@ -24,7 +24,7 @@ enum {
 };
 
 
-/* 初始化变体类型lept_value的v, 使其类型为LEPT_NULL */
+/* 部分初始化lept_value v, 使v->type为LEPT_NULL */
 #define lept_init(v) do { (v)->type = LEPT_NULL; }while(0) 
 
 int lept_parse(lept_value* v, const char* json);
