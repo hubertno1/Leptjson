@@ -1,3 +1,7 @@
+#ifdef _WINDOWS
+#define _CRTDBG_MAP_ALLOC
+#include <crtdbg.h>
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -244,6 +248,9 @@ static void test_parse() {
 }
 
 int main() {
+#ifdef _WINDOWS
+    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+#endif
     test_parse();       //测试总函数 
     printf("%d/%d (%3.2f%%) passed\n", test_pass, test_count, test_pass * 100.0 / test_count);      //%3.2f表示数字部分包括小数点占3位，不足3个，前面补空格，超过3个，按实际大小表示；2表示小数部分不包括小数点占2位
     return main_ret;        

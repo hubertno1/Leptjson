@@ -1,3 +1,7 @@
+#ifdef _WINDOWS
+#define _CRTDBG_MAP_ALLOC
+#include <crtdbg.h>
+#endif
 #include "leptjson.h"
 #include <assert.h>  /* assert() */
 #include <errno.h>  /* errno, ERANGE */
@@ -218,7 +222,7 @@ double lept_get_number(const lept_value* v) {
 }
 
 void lept_set_number(lept_value* v, double n) {
-    lept_free(&v);
+    lept_free(v);
     v->u.n = n;
     v->type = LEPT_NUMBER;
 }
